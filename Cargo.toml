@@ -1,0 +1,13 @@
+[package]
+name = "ancomplex"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.64"
+authors = ["Ilya"]
+description = "Package provides complex numbers and operation with self"
+
+keywords = ["complex", "complex-number", "num-complex"]
+categories = ["math", "science"]
+
+[dependencies]
+num-traits = "0.2.19"
