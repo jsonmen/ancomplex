@@ -8,7 +8,7 @@ license = "MIT"
 description = "Package provides complex numbers and operation with self"
 
 keywords = ["complex", "complex-number", "num-complex"]
-categories = ["math", "science"]
+categories = ["mathematics", "science"]
 
 [dependencies]
 num-traits = "0.2.19"
