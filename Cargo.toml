@@ -4,7 +4,7 @@ version = "0.0.1"
 edition = "2021"
 rust-version = "1.64"
 authors = ["Ilya"]
-license = ["MIT"]
+license = "MIT"
 description = "Package provides complex numbers and operation with self"
 
 keywords = ["complex", "complex-number", "num-complex"]
