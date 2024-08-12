@@ -1,3 +1,4 @@
+use crate::complex;
 use num_traits::{Float, FloatConst, NumOps, One, Zero};
 use std::ops::Neg;
 
@@ -32,14 +33,82 @@ impl<T: NumOps + One + Zero + Neg<Output = T> + Clone> Complex<T> {
     }
 }
 impl<T: Float> Complex<T> {
+    pub fn sin(&self) -> Self {
+        complex(
+            self.real.sin() * self.imag.cosh(),
+            self.real.cos() * self.imag.sinh(),
+        )
+    }
+    pub fn cos(&self) -> Self {
+        complex(
+            self.real.cos() * self.imag.cosh(),
+            -self.real.sin() * self.imag.sinh(),
+        )
+    }
+    pub fn tan(&self) -> Self {
+        self.sin() / self.cos()
+    }
+    pub fn asin(&self) -> Self {
+        let i = Self::i();
+        -i * ((complex(T::one(), T::zero()) - self.clone() * self.clone()).sqrt()
+            + self.clone() * i)
+            .ln()
+    }
+    pub fn acos(&self) -> Self {
+        let i = Self::i();
+        -i * ((self.clone() * self.clone() - complex(T::one(), T::zero())).sqrt() + self.clone())
+            .ln()
+    }
+    pub fn atan(&self) -> Self {
+        let i = Self::i();
+        let one = complex(T::one(), T::zero());
+        let two = one + one;
+        let iz = i * self.clone();
+        (i / two) * ((one - iz) / (one + iz)).ln()
+    }
+    pub fn sinh(&self) -> Self {
+        complex(
+            self.real.sinh() * self.imag.cos(),
+            self.real.cosh() * self.imag.sin(),
+        )
+    }
+    pub fn cosh(&self) -> Self {
+        complex(
+            self.real.cosh() * self.imag.cos(),
+            self.real.sinh() * self.imag.sin(),
+        )
+    }
+    pub fn tanh(&self) -> Self {
+        let (two_real, two_imag) = (self.real + self.real, self.imag + self.imag);
+        complex(two_real.sinh(), two_imag.sin()).unscale(two_real.cosh() + two_imag.cos())
+    }
+
+    pub fn asinh(self) -> Self {
+        let one = complex(T::one(), T::zero());
+        (self + (one + self * self).sqrt()).ln()
+    }
+
+    pub fn acosh(self) -> Self {
+        let one = complex(T::one(), T::zero());
+        let two = one + one;
+        two * (((self + one) / two).sqrt() + ((self - one) / two).sqrt()).ln()
+    }
+
+    pub fn atanh(self) -> Self {
+        let one = complex(T::one(), T::zero());
+        let two = one + one;
+        if self == one {
+            return complex(T::infinity(), T::zero());
+        } else if self == -one {
+            return complex(-T::infinity(), T::zero());
+        }
+        ((one + self).ln() - (one - self).ln()) / two
+    }
     pub fn to_polar(&self) -> (T, T) {
         (self.norm(), self.arg())
     }
     pub fn from_polar(radius: T, theta: T) -> Self {
-        Complex {
-            real: radius * theta.cos(),
-            imag: radius * theta.sin(),
-        }
+        complex(radius * theta.cos(), radius * theta.sin())
     }
 
     pub fn powc(&self, power: Complex<T>) -> Self {
@@ -77,7 +146,13 @@ impl<T: Float> Complex<T> {
     }
 
     pub fn square(&self) -> Self {
-        self.powi(2)
+        let two = T::one() + T::one();
+        self.powf(two)
+    }
+    pub fn sqrt(&self) -> Self {
+        let one = T::one();
+        let two = one + one;
+        self.powf(one / two)
     }
     pub fn scale(&self, scallar: T) -> Self {
         self * scallar

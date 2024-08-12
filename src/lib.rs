@@ -55,7 +55,6 @@ extern crate num_traits;
 pub(crate) mod complex_ops;
 pub(crate) mod complexc;
 pub(crate) mod complexfmt;
-pub(crate) mod sign_trait;
 pub use complexc::Complex;
 
 /// Function to init `Complex` struct (*Recomed way to init complex numbers*)
