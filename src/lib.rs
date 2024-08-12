@@ -46,7 +46,7 @@
 //! fn main() {
 //!     let c = complex(4, 2);
 //!
-//!     println!("{}", c); // Output: 4 + 2i
+//!     println!("{}", c); // Output: 4+2i
 //! }
 //! ```
 //!
