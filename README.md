@@ -1,6 +1,6 @@
 # ancomplex
 
-Provides easy to use, begginer frendly and python like complex numbers
+Package provides easy to use, begginer frendly and python like complex numbers
 ## Examples
 Create complex number
 ```rust
@@ -51,3 +51,6 @@ fn main() {
     println!("{}", c); // Output: 4 + 2i
 }
 ```
+## Roadmap
++ Make trigonometric function more efficent
++ Add parsing from strings

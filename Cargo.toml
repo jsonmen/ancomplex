@@ -1,13 +1,15 @@
 [package]
 name = "ancomplex"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 rust-version = "1.64"
+documentation = "https://docs.rs/ancomplex"
+repository = "https://github.com/jsonmen/ancomplex"
 authors = ["Ilya"]
-license = "MIT"
-description = "Package provides complex numbers and operation with self"
+license = "MIT OR Apache-2.0"
+description = "Package provides easy to use, begginer frendly and python like complex numbers"
 
-keywords = ["complex", "complex-number", "num-complex"]
+keywords = ["complex", "complex-number", "num-complex", "math"]
 categories = ["mathematics", "science"]
 
 [dependencies]

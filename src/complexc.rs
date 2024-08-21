@@ -146,8 +146,12 @@ impl<T: Float> Complex<T> {
     }
 
     pub fn square(&self) -> Self {
+        // Formula (a+bi)^2 = a^2 + 2*a*bi - b^2
         let two = T::one() + T::one();
-        self.powf(two)
+        complex(
+            self.real * self.real - self.imag * self.imag,
+            two * self.real * self.imag,
+        )
     }
     pub fn sqrt(&self) -> Self {
         let one = T::one();

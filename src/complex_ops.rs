@@ -1,6 +1,5 @@
-extern crate num_traits;
-use crate::complexc::Complex;
-use num_traits::{Num, NumAssign};
+use crate::{complex, Complex};
+use num_traits::{Num, NumAssign, Zero};
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, Sub, SubAssign};
 
 impl<T: Num + Clone> Add<Complex<T>> for Complex<T> {
@@ -250,7 +249,6 @@ macro_rules! impl_real_ops {
 
                 #[inline]
                 fn div(self, other: Complex<$real>) -> Self::Output {
-                    // a / (c + i d) == [a * (c - i d)] / (c*c + d*d)
                     Self::Output { real: other.real / self, imag: other.imag / self}
                 }
             }
@@ -260,10 +258,7 @@ macro_rules! impl_real_ops {
 
                 #[inline]
                 fn rem(self, other: Complex<$real>) -> Self::Output {
-                    Complex {
-                        real: self,
-                        imag: self-self
-                    } % other
+                    Self::Output{real: self, imag: Self::zero()} % other
                 }
             }
         )*
