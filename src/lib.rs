@@ -52,6 +52,7 @@
 //!
 extern crate num_traits;
 
+pub(crate) mod cast;
 pub(crate) mod complex_ops;
 pub(crate) mod complexc;
 pub(crate) mod complexfmt;

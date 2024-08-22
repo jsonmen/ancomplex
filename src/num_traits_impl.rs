@@ -32,6 +32,7 @@ impl<T: Num + Clone + ConstZero> ConstZero for Complex<T> {
         imag: T::ZERO,
     };
 }
+
 impl<T: Num + Clone + ConstZero + ConstOne + Copy> ConstOne for Complex<T> {
     const ONE: Self = Complex {
         real: T::ONE,

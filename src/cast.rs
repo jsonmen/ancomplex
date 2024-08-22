@@ -14,7 +14,7 @@ macro_rules! impl_toprim {
 }
 macro_rules! impl_fprim {
     ($ty:ty, $fromfn:ident) => {
-        fn $fromfn(n: $ty) -> Option<$ty> {
+        fn $fromfn(n: $ty) -> Option<Complex<T>> {
             Some(complex(T::$fromfn(n)?, T::zero()))
         }
     };
