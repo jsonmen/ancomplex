@@ -50,14 +50,20 @@
 //! }
 //! ```
 //!
+#[cfg(test)]
+mod tests;
+
 extern crate num_traits;
 
 pub(crate) mod cast;
+pub(crate) mod complex_assing_ops;
 pub(crate) mod complex_ops;
 pub(crate) mod complexc;
 pub(crate) mod complexfmt;
 pub(crate) mod num_traits_impl;
+pub mod traits;
 pub use complexc::Complex;
+pub use traits::*;
 
 /// Function to init `Complex` struct (*Recomed way to init complex numbers*)
 pub fn complex<T>(real: T, imag: T) -> Complex<T> {
@@ -83,16 +89,5 @@ pub fn c64<T: Into<f64>>(real: T, imag: T) -> Complex<f64> {
     Complex {
         real: real.into(),
         imag: imag.into(),
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
     }
 }

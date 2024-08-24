@@ -1,6 +1,5 @@
 use crate::complex;
-use num_traits::{Float, FloatConst, NumOps, One, Zero};
-use std::ops::Neg;
+use num_traits::{Float, FloatConst, Num};
 
 /// struct for Complex numbers (a+bi)
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -10,21 +9,49 @@ pub struct Complex<T> {
     /// imaginary part of complex number
     pub imag: T,
 }
-
-impl<T: NumOps + One + Zero + Neg<Output = T> + Clone> Complex<T> {
-    pub fn conj(&self) -> Self {
-        Self {
-            real: self.real.clone(),
-            imag: -self.imag.clone(),
-        }
-    }
-
+impl<T: Num + Clone> Complex<T> {
     /// Function for find square norm of complex number.
-    /// Formula: $z^2 = a^2 + b^2$
+    /// Formula: a² + b²
     pub fn square_norm(&self) -> T {
         self.real.clone() * self.real.clone() + self.imag.clone() * self.imag.clone()
     }
-
+    /// Function to complute square (power of 2) of complex number
+    /// Formula: (a+bi)² = a² + 2*a*bi - b²
+    pub fn square(&self) -> Self {
+        let two = T::one() + T::one();
+        complex(
+            self.real.clone() * self.real.clone() - self.imag.clone() * self.imag.clone(),
+            two * self.real.clone() * self.imag.clone(),
+        )
+    }
+    pub fn scale(&self, scallar: T) -> Self {
+        self * scallar
+    }
+    pub fn unscale(&self, scallar: T) -> Self {
+        self / scallar
+    }
+    pub fn inv(&self) -> Self {
+        let sqs = self.square_norm();
+        Complex {
+            real: self.real.clone() / sqs.clone(),
+            imag: T::zero() - self.imag.clone() / sqs,
+        }
+    }
+    pub fn conj(&self) -> Self {
+        Self {
+            real: self.real.clone(),
+            imag: T::zero() - self.imag.clone(),
+        }
+    }
+    /// Computes gausian integer for complex number
+    pub fn gausian_integer(&self, other: Complex<T>) -> Complex<T> {
+        let q = self.clone() / other;
+        complex(
+            q.real.clone() - q.real % T::one(),
+            q.imag.clone() - q.imag % T::one(),
+        )
+    }
+    /// Create complex number only with imaginary number (0+1i)
     pub fn i() -> Self {
         Complex {
             real: T::zero(),
@@ -32,6 +59,7 @@ impl<T: NumOps + One + Zero + Neg<Output = T> + Clone> Complex<T> {
         }
     }
 }
+
 impl<T: Float> Complex<T> {
     pub fn sin(&self) -> Self {
         complex(
@@ -145,30 +173,10 @@ impl<T: Float> Complex<T> {
         }
     }
 
-    pub fn square(&self) -> Self {
-        // Formula (a+bi)^2 = a^2 + 2*a*bi - b^2
-        let two = T::one() + T::one();
-        complex(
-            self.real * self.real - self.imag * self.imag,
-            two * self.real * self.imag,
-        )
-    }
     pub fn sqrt(&self) -> Self {
-        let one = T::one();
-        let two = one + one;
-        self.powf(one / two)
-    }
-    pub fn scale(&self, scallar: T) -> Self {
-        self * scallar
-    }
-    pub fn unscale(&self, scallar: T) -> Self {
-        self / scallar
-    }
-    pub fn inv(&self) -> Self {
-        Complex {
-            real: T::one(),
-            imag: T::zero(),
-        } / self.clone()
+        let two = T::one() + T::one();
+        let (r, theta) = self.to_polar();
+        Self::from_polar(r.sqrt(), theta / two)
     }
 
     pub fn l1_norm(&self) -> T {

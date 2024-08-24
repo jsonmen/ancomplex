@@ -1,92 +1,67 @@
-use crate::{complex, Complex};
-use num_traits::{Num, NumAssign, Zero};
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, Sub, SubAssign};
+use crate::Complex;
+use num_traits::{Num, Zero};
+use std::ops::{Add, Div, Mul, Neg, Rem, Sub};
 
-impl<T: Num + Clone> Add<Complex<T>> for Complex<T> {
+impl<T: Num> Add<Complex<T>> for Complex<T> {
     type Output = Complex<T>;
     fn add(self, rhs: Complex<T>) -> Complex<T> {
         Self {
-            real: self.real.clone() + rhs.real.clone(),
-            imag: self.imag.clone() + rhs.imag.clone(),
+            real: self.real + rhs.real,
+            imag: self.imag + rhs.imag,
         }
     }
 }
-impl<T: NumAssign> AddAssign<Complex<T>> for Complex<T> {
-    fn add_assign(&mut self, rhs: Complex<T>) {
-        self.real += rhs.real;
-        self.imag += rhs.imag;
-    }
-}
-impl<T: Num + Clone> Sub<Complex<T>> for Complex<T> {
+
+impl<T: Num> Sub<Complex<T>> for Complex<T> {
     type Output = Complex<T>;
     fn sub(self, rhs: Complex<T>) -> Complex<T> {
         Self {
-            real: self.real.clone() - rhs.real.clone(),
-            imag: self.imag.clone() - rhs.imag.clone(),
+            real: self.real - rhs.real,
+            imag: self.imag - rhs.imag,
         }
     }
 }
-impl<T: NumAssign> SubAssign<Complex<T>> for Complex<T> {
-    fn sub_assign(&mut self, rhs: Complex<T>) {
-        self.real -= rhs.real;
-        self.imag -= rhs.imag;
-    }
-}
-impl<T: Num + Clone + Copy> Mul<Complex<T>> for Complex<T> {
+
+impl<T: Num + Clone> Mul<Complex<T>> for Complex<T> {
     type Output = Complex<T>;
     fn mul(self, rhs: Complex<T>) -> Complex<T> {
-        let (a, b, c, d) = (self.real, self.imag, rhs.real, rhs.imag);
         Self {
-            real: a * c - b * d,
-            imag: a * d + b * c,
+            real: self.real.clone() * rhs.real.clone() - self.imag.clone() * rhs.imag.clone(),
+            imag: self.real * rhs.imag + self.imag * rhs.real,
         }
     }
 }
-impl<T: NumAssign + Copy + Clone> MulAssign<Complex<T>> for Complex<T> {
-    fn mul_assign(&mut self, rhs: Complex<T>) {
-        let (a, b, c, d) = (self.real, self.imag, rhs.real, rhs.imag);
-        self.real = a * c - b * d;
-        self.imag = a * d + d * c;
-    }
-}
 
-impl<T: Num + Clone + Copy> Div<Complex<T>> for Complex<T> {
+impl<T: Num + Clone> Div<Complex<T>> for Complex<T> {
     type Output = Complex<T>;
     fn div(self, rhs: Complex<T>) -> Complex<T> {
-        let (a, b, c, d) = (self.real, self.imag, rhs.real, rhs.imag);
-        let sqs = c * c + d * d;
+        let sqs = rhs.real.clone() * rhs.real.clone() + rhs.imag.clone() * rhs.imag.clone();
         Self {
-            real: (a * c + b * d) / sqs,
-            imag: (b * c - a * d) / sqs,
+            real: (self.real.clone() * rhs.real.clone() + self.imag.clone() * rhs.imag.clone())
+                / sqs.clone(),
+            imag: (self.imag * rhs.real - self.real * rhs.imag) / sqs,
         }
     }
 }
-impl<T: NumAssign + Copy + Clone> DivAssign<Complex<T>> for Complex<T> {
-    fn div_assign(&mut self, rhs: Complex<T>) {
-        let (a, b, c, d) = (self.real, self.imag, rhs.real, rhs.imag);
-        let sqs = c * c + d * d;
-        self.real = (a * c + b * d) / sqs;
-        self.imag = (b * c - a * d) / sqs;
-    }
-}
-impl<T: Num + Clone + Copy> Rem<Complex<T>> for Complex<T> {
+
+impl<T: Num + Clone> Rem<Complex<T>> for Complex<T> {
     type Output = Complex<T>;
     fn rem(self, rhs: Complex<T>) -> Complex<T> {
-        let q = self / rhs;
-        return self - q * rhs;
+        let gausian_int = self.gausian_integer(rhs.clone());
+        self - rhs * gausian_int
     }
 }
 
-impl<T: Clone + Neg<Output = T>> Neg for Complex<T> {
+impl<T: Num + Clone> Neg for Complex<T> {
     type Output = Complex<T>;
     fn neg(self) -> Complex<T> {
         Self {
-            real: -self.real.clone(),
-            imag: -self.imag.clone(),
+            real: T::zero() - self.real.clone(),
+            imag: T::zero() - self.imag.clone(),
         }
     }
 }
-impl<'a, T: Clone + Num + Neg<Output = T>> Neg for &'a Complex<T> {
+impl<'a, T: Num + Clone> Neg for &'a Complex<T> {
     type Output = Complex<T>;
 
     #[inline]
@@ -94,7 +69,7 @@ impl<'a, T: Clone + Num + Neg<Output = T>> Neg for &'a Complex<T> {
         -self.clone()
     }
 }
-impl<T: Clone + Num> Add<T> for Complex<T> {
+impl<T: Num + Clone> Add<T> for Complex<T> {
     type Output = Complex<T>;
 
     #[inline]
@@ -106,7 +81,7 @@ impl<T: Clone + Num> Add<T> for Complex<T> {
     }
 }
 
-impl<T: Clone + Num> Sub<T> for Complex<T> {
+impl<T: Num + Clone> Sub<T> for Complex<T> {
     type Output = Complex<T>;
 
     #[inline]
@@ -118,7 +93,7 @@ impl<T: Clone + Num> Sub<T> for Complex<T> {
     }
 }
 
-impl<T: Clone + Num> Mul<T> for Complex<T> {
+impl<T: Num + Clone> Mul<T> for Complex<T> {
     type Output = Complex<T>;
 
     #[inline]
@@ -130,7 +105,7 @@ impl<T: Clone + Num> Mul<T> for Complex<T> {
     }
 }
 
-impl<T: Clone + Num> Div<T> for Complex<T> {
+impl<T: Num + Clone> Div<T> for Complex<T> {
     type Output = Complex<T>;
 
     #[inline]
@@ -142,7 +117,7 @@ impl<T: Clone + Num> Div<T> for Complex<T> {
     }
 }
 
-impl<T: Clone + Num> Rem<T> for Complex<T> {
+impl<T: Num + Clone> Rem<T> for Complex<T> {
     type Output = Complex<T>;
 
     #[inline]
@@ -156,7 +131,7 @@ impl<T: Clone + Num> Rem<T> for Complex<T> {
 
 macro_rules! impl_real_ops {
     (@forward $imp:ident::$method:ident for $($real:ident),*) => (
-        impl<'a, T: Clone + Num> $imp<&'a T> for Complex<T> {
+        impl<'a, T: Num + Clone> $imp<&'a T> for Complex<T> {
             type Output = Complex<T>;
 
             #[inline]
@@ -164,7 +139,7 @@ macro_rules! impl_real_ops {
                 self.$method(other.clone())
             }
         }
-        impl<'a, T: Clone + Num> $imp<T> for &'a Complex<T> {
+        impl<'a, T: Num + Clone> $imp<T> for &'a Complex<T> {
             type Output = Complex<T>;
 
             #[inline]
@@ -172,7 +147,7 @@ macro_rules! impl_real_ops {
                 self.clone().$method(other)
             }
         }
-        impl<'a, 'b, T: Clone + Num> $imp<&'a T> for &'b Complex<T> {
+        impl<'a, 'b, T: Num + Clone> $imp<&'a T> for &'b Complex<T> {
             type Output = Complex<T>;
 
             #[inline]
@@ -249,7 +224,9 @@ macro_rules! impl_real_ops {
 
                 #[inline]
                 fn div(self, other: Complex<$real>) -> Self::Output {
-                    Self::Output { real: other.real / self, imag: other.imag / self}
+                    let norm_sqr = other.real.clone() * other.real.clone() + other.imag.clone() * other.imag.clone();
+                    Self::Output{real: self * other.real / norm_sqr.clone(),
+                                      imag: $real::zero() - self * other.imag / norm_sqr}
                 }
             }
 
