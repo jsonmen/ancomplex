@@ -61,9 +61,7 @@ pub(crate) mod complex_ops;
 pub(crate) mod complexc;
 pub(crate) mod complexfmt;
 pub(crate) mod num_traits_impl;
-pub mod traits;
 pub use complexc::Complex;
-pub use traits::*;
 
 /// Function to init `Complex` struct (*Recomed way to init complex numbers*)
 pub fn complex<T>(real: T, imag: T) -> Complex<T> {
